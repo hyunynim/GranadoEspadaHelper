@@ -8,7 +8,7 @@
 #include "GranadoEspadaHelperDlg.h"
 #include"CCaputreTool.h"
 #include "afxdialogex.h"
-
+#define DBUG
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -235,10 +235,20 @@ void CGranadoEspadaHelperDlg::OnTimer(UINT_PTR nIDEvent)
 	case imageCheckTimer:
 		gameSrc = hwnd2mat(hwndDesktop);
 		for (int i = 0; i < imgList.size(); ++i) {
-			if (FindImage(imgList[i].img, tmp, gameSrc))
+			if (FindImage(imgList[i].img, tmp, gameSrc)) {
 				m_ImgList.SetItem(i, 0, LVIF_TEXT, "ON", 0, 0, 0, 0);
-			else
+#ifdef DBUG
+				if (i == 1)
+					bark();
+#endif
+			}
+			else {
+#ifdef DBUG
+				if (i == 0)
+					bark();
+#endif
 				m_ImgList.SetItem(i, 0, LVIF_TEXT, "OFF", 0, 0, 0, 0);
+			}
 		}
 		break;
 	}

@@ -14,7 +14,10 @@
 #include<opencv2/highgui/highgui_c.h>
 #include<bits/stdc++.h>
 #include <afxcontrolbars.h>
+#include<mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 using namespace cv;
 using namespace std;
 Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 matrix로 변환
+void bark();
 #endif //PCH_H

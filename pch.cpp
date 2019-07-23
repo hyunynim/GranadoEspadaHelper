@@ -52,3 +52,7 @@ Mat hwnd2mat(HWND hwnd) {
 
 	return src;
 }
+
+void bark(){	//알림음
+	PlaySound(TEXT("bark.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NOSTOP);
+}
