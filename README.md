@@ -1,4 +1,5 @@
 # GranadoEspadaHelper
+이 프로그램은 GPL v2.0 라이센스를 따릅니다.
 
 # 2019.07.24.
 - 이미지 찾기
