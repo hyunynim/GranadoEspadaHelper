@@ -19,6 +19,8 @@
 CGranadoEspadaHelperDlg::CGranadoEspadaHelperDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GRANADOESPADAHELPER_DIALOG, pParent),
 	hwndDesktop(::FindWindow(0, "Granado Espada"))
+	, m_imgName(_T(""))
+	, m_imgPath(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -27,12 +29,16 @@ void CGranadoEspadaHelperDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_IMAGE_LIST, m_ImgList);
+	DDX_Text(pDX, IDC_IMAGE_NAME, m_imgName);
+	DDX_Text(pDX, IDC_IMAGE_PATH, m_imgPath);
 }
 
 BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CGranadoEspadaHelperDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_FIND_IMAGE_PATH, &CGranadoEspadaHelperDlg::OnBnClickedFindImagePath)
+	ON_BN_CLICKED(IDC_ADD_IMAGE, &CGranadoEspadaHelperDlg::OnBnClickedAddImage)
 END_MESSAGE_MAP()
 
 
@@ -147,26 +153,31 @@ int CGranadoEspadaHelperDlg::InitImgList() {
 	CRect r;
 	m_ImgList.GetWindowRect(&r);
 	m_ImgList.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);	//한 행 전체 선택
-	m_ImgList.InsertColumn(0, "상태", LVCFMT_CENTER, r.Width() * 0.2);
-	m_ImgList.InsertColumn(1, "이름", LVCFMT_CENTER, r.Width() * 0.3);
-	m_ImgList.InsertColumn(2, "경로", LVCFMT_CENTER, r.Width() * 0.5);
+	m_ImgList.InsertColumn(0, "상태", LVCFMT_CENTER, r.Width() * 0.1);
+	m_ImgList.InsertColumn(1, "이름", LVCFMT_CENTER, r.Width() * 0.2);
+	m_ImgList.InsertColumn(2, "경로", LVCFMT_CENTER, r.Width() * 0.7);
 
 	/*File read*/
 	FILE* fp = fopen("imgList.txt", "r");
+	FILE* tmpFp;
 	if (fp == NULL)
 		fp = fopen("imgList.txt", "w");
-	fclose(fp);
 	char name[1010], path[1010];
 	Mat* tmpMat;
-	while (~scanf("%s %s", name, path)) {
-		fp = fopen(path, "r");
-		if (fp == NULL)continue;
-		fclose(fp);
+	while (~fscanf(fp, "%s %s", name, path)) {
+		tmpFp = fopen(path, "r");
+		if (tmpFp == NULL)continue;
+		fclose(tmpFp);
+		m_ImgList.InsertItem(imgList.size(), "OFF");
+		m_ImgList.SetItem(imgList.size(), 1, LVIF_TEXT, name, 0, 0, 0, 0);
+		m_ImgList.SetItem(imgList.size(), 2, LVIF_TEXT, path, 0, 0, 0, 0);
 		tmpMat = new Mat();
 		*tmpMat = imread(path, IMREAD_UNCHANGED);
 		imgList.push_back({ name, path, *tmpMat });
 		delete tmpMat;
 	}
+	UpdateData(false);
+	fclose(fp);
 	return imgList.size();
 }
 void CGranadoEspadaHelperDlg::OnBnClickedOk()
@@ -181,4 +192,35 @@ void CGranadoEspadaHelperDlg::OnBnClickedOk()
 	imshow("output", dst);
 	
 	//CDialogEx::OnOK();
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedFindImagePath()
+{
+	UpdateData(TRUE);
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	static TCHAR BASED_CODE szFilter[] = "이미지 파일(*.BMP, *.GIF, *.JPG, *.PNG) | *.BMP;*.GIF;*.JPG;*.bmp;*.jpg;*.gif;*.png |모든파일(*.*)|*.*||";
+	CFileDialog dlg(TRUE, "*.jpg", "image", OFN_HIDEREADONLY, szFilter);
+	if (IDOK == dlg.DoModal()){
+		m_imgPath = dlg.GetPathName();
+		UpdateData(FALSE);
+	}
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedAddImage()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+	if (m_imgName == "" || m_imgPath == "")
+		MessageBox("해당 이미지의 이름 또는 경로를 확인해주세요.");
+	else {
+		m_ImgList.InsertItem(imgList.size(), "OFF");
+		m_ImgList.SetItem(imgList.size(), 1, LVIF_TEXT, m_imgName, 0, 0, 0, 0);
+		m_ImgList.SetItem(imgList.size(), 2, LVIF_TEXT, m_imgPath, 0, 0, 0, 0);
+		imgList.push_back({ m_imgName, m_imgPath, imread((LPCSTR)m_imgPath, IMREAD_UNCHANGED) });
+		MessageBox("이미지 추가 완료");
+		m_imgName = m_imgPath = "";
+		UpdateData(FALSE);
+	}
 }

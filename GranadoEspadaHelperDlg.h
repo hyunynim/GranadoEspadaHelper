@@ -43,4 +43,8 @@ public:
 	Mat hwnd2mat(HWND hwnd);
 	afx_msg void OnBnClickedOk();
 	CListCtrl m_ImgList;
+	CString m_imgName;
+	CString m_imgPath;
+	afx_msg void OnBnClickedFindImagePath();
+	afx_msg void OnBnClickedAddImage();
 };
