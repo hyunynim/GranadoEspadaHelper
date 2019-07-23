@@ -39,6 +39,8 @@ BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CGranadoEspadaHelperDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_FIND_IMAGE_PATH, &CGranadoEspadaHelperDlg::OnBnClickedFindImagePath)
 	ON_BN_CLICKED(IDC_ADD_IMAGE, &CGranadoEspadaHelperDlg::OnBnClickedAddImage)
+	ON_BN_CLICKED(IDC_SAVE_IMAGE_LIST, &CGranadoEspadaHelperDlg::OnBnClickedSaveImageList)
+	ON_BN_CLICKED(IDC_DELETE_IMAGE, &CGranadoEspadaHelperDlg::OnBnClickedDeleteImage)
 END_MESSAGE_MAP()
 
 
@@ -223,4 +225,21 @@ void CGranadoEspadaHelperDlg::OnBnClickedAddImage()
 		m_imgName = m_imgPath = "";
 		UpdateData(FALSE);
 	}
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedSaveImageList()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	FILE* fp = fopen("imgList.txt", "w");
+	for (int i = 0; i < imgList.size(); ++i)
+		fprintf(fp, "%s %s", imgList[i].name, imgList[i].path);
+	fclose(fp);
+	MessageBox("이미지 리스트가 저장되었습니다.");
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedDeleteImage()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

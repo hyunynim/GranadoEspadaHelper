@@ -47,4 +47,5 @@ public:
 	CString m_imgPath;
 	afx_msg void OnBnClickedFindImagePath();
 	afx_msg void OnBnClickedAddImage();
+	afx_msg void OnBnClickedSaveImageList();
 };
