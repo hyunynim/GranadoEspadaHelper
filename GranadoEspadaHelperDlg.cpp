@@ -159,8 +159,8 @@ void CGranadoEspadaHelperDlg::OnBnClickedFindImagePath()
 {
 	UpdateData(TRUE);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	static TCHAR BASED_CODE szFilter[] = "이미지 파일(*.BMP, *.GIF, *.JPG, *.PNG) | *.BMP;*.GIF;*.JPG;*.bmp;*.jpg;*.gif;*.png |모든파일(*.*)|*.*||";
-	CFileDialog dlg(TRUE, "*.jpg", "image", OFN_HIDEREADONLY, szFilter);
+	static TCHAR BASED_CODE szFilter[] = "이미지 파일(*.BMP, *.GIF, *.JPG, *.PNG) | *.BMP;*.GIF;*.JPG;*.PNG;*.bmp;*.jpg;*.gif;*.png |모든파일(*.*)|*.*||";
+	CFileDialog dlg(TRUE, "*.png", "image", OFN_HIDEREADONLY, szFilter);
 	if (IDOK == dlg.DoModal()){
 		m_imgPath = dlg.GetPathName();
 		UpdateData(FALSE);
@@ -254,7 +254,15 @@ void CGranadoEspadaHelperDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 	CDialogEx::OnTimer(nIDEvent);
 }
+/*
+FindImage 
+gameSrc로부터 templ 이미지를 검색
+result는 결과값 계산을 위한 temporary matrix
+dstImage는 gameSrc로부터 찾은 영역에 rect처리 된 matrix
+오차 비율(ratio)에 따라 해당 이미지가 존재하는지 여부 판단
+*/
 bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& result, Mat& dstImage) {
+	const double ratio = 1.5;
 	double minVal, maxVal;
 	Point minLoc, maxLoc;
 	matchTemplate(gameSrc, templ, result, TM_SQDIFF);
@@ -268,7 +276,7 @@ bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& result, Mat& dstImage) 
 			if (tmp.at<Vec3b>(i, j) == templ.at<Vec3b>(i, j))
 				++cnt;
 	int sz = tmp.rows * tmp.cols;
-	if (sz - cnt <= sz / 1.5) return 1;
+	if (sz - cnt <= sz / ratio) return 1;
 	return 0;
 }
 
