@@ -233,7 +233,7 @@ void CGranadoEspadaHelperDlg::OnBnClickedSaveImageList()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	FILE* fp = fopen("imgList.txt", "w");
 	for (int i = 0; i < imgList.size(); ++i)
-		fprintf(fp, "%s %s", imgList[i].name, imgList[i].path);
+		fprintf(fp, "%s %s\n", imgList[i].name, imgList[i].path);
 	fclose(fp);
 	MessageBox("이미지 리스트가 저장되었습니다.");
 }
@@ -242,4 +242,10 @@ void CGranadoEspadaHelperDlg::OnBnClickedSaveImageList()
 void CGranadoEspadaHelperDlg::OnBnClickedDeleteImage()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	POSITION p;
+	p = m_ImgList.GetFirstSelectedItemPosition();
+	int i = m_ImgList.GetNextSelectedItem(p);
+	m_ImgList.DeleteItem(i);
+	imgList.erase(imgList.begin() + i);
+	MessageBox("해당 이미지가 삭제되었습니다.");
 }

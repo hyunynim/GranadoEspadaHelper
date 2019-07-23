@@ -48,4 +48,5 @@ public:
 	afx_msg void OnBnClickedFindImagePath();
 	afx_msg void OnBnClickedAddImage();
 	afx_msg void OnBnClickedSaveImageList();
+	afx_msg void OnBnClickedDeleteImage();
 };
