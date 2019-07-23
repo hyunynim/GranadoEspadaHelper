@@ -9,9 +9,9 @@
 
 // 여기에 미리 컴파일하려는 헤더 추가
 #include "framework.h"
-#include"opencv2/imgproc.hpp"
-#include"opencv2/highgui.hpp"
-#include"opencv2/highgui/highgui_c.h"
+#include<opencv2/imgproc.hpp>
+#include<opencv2/highgui.hpp>
+#include<opencv2/highgui/highgui_c.h>
 #include<bits/stdc++.h>
 using namespace cv;
 using namespace std;

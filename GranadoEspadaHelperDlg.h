@@ -44,7 +44,8 @@ public:
 	Mat gameSrc;			//게임 화면
 	//Func
 	int InitImgList();		//프로그램 실행 시 저장된 이미지 리스트 불러오기
-	Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 Mat로 변환
+	Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 matrix로 변환
+	Mat tmp;				//계산용 임시 matrix
 	bool FindImage(Mat& templ, Mat& result, Mat& dstImage);
 
 	//MFC

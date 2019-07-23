@@ -170,7 +170,7 @@ int CGranadoEspadaHelperDlg::InitImgList() {
 	if (fp == NULL)
 		fp = fopen("imgList.txt", "w");
 	char name[1010], path[1010];
-	Mat* tmpMat;
+	Mat tmpMat;
 	while (~fscanf(fp, "%s %s", name, path)) {
 		tmpFp = fopen(path, "r");
 		if (tmpFp == NULL)continue;
@@ -178,10 +178,8 @@ int CGranadoEspadaHelperDlg::InitImgList() {
 		m_ImgList.InsertItem(imgList.size(), "OFF");
 		m_ImgList.SetItem(imgList.size(), 1, LVIF_TEXT, name, 0, 0, 0, 0);
 		m_ImgList.SetItem(imgList.size(), 2, LVIF_TEXT, path, 0, 0, 0, 0);
-		tmpMat = new Mat();
-		*tmpMat = imread(path, IMREAD_UNCHANGED);
-		imgList.push_back({ name, path, *tmpMat });
-		delete tmpMat;
+		tmpMat = imread(path, IMREAD_UNCHANGED);
+		imgList.push_back({ name, path, tmpMat });
 	}
 	UpdateData(false);
 	fclose(fp);
@@ -222,10 +220,13 @@ void CGranadoEspadaHelperDlg::OnBnClickedAddImage()
 	if (m_imgName == "" || m_imgPath == "")
 		MessageBox("해당 이미지의 이름 또는 경로를 확인해주세요.");
 	else {
+		char pathTmp[1010];
+		sprintf(pathTmp, "%s", m_imgPath);
+		Mat tmpMat = imread(pathTmp, IMREAD_UNCHANGED);
 		m_ImgList.InsertItem(imgList.size(), "OFF");
 		m_ImgList.SetItem(imgList.size(), 1, LVIF_TEXT, m_imgName, 0, 0, 0, 0);
 		m_ImgList.SetItem(imgList.size(), 2, LVIF_TEXT, m_imgPath, 0, 0, 0, 0);
-		imgList.push_back({ m_imgName, m_imgPath, imread((LPCSTR)m_imgPath, IMREAD_UNCHANGED) });
+		imgList.push_back({ m_imgName, m_imgPath, tmpMat });
 		MessageBox("이미지 추가 완료");
 		m_imgName = m_imgPath = "";
 		UpdateData(FALSE);
@@ -274,9 +275,16 @@ void CGranadoEspadaHelperDlg::OnBnClickedCheckImageStop()
 void CGranadoEspadaHelperDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	char msg[1010];
 	switch (nIDEvent) {
 	case imageCheckTimer:
-		
+		gameSrc = hwnd2mat(hwndDesktop);
+		for (int i = 0; i < imgList.size(); ++i) {
+			if (FindImage(imgList[i].img, tmp, gameSrc))
+				m_ImgList.SetItem(i, 0, LVIF_TEXT, "ON", 0, 0, 0, 0);
+			else
+				m_ImgList.SetItem(i, 0, LVIF_TEXT, "OFF", 0, 0, 0, 0);
+		}
 		break;
 	}
 	CDialogEx::OnTimer(nIDEvent);
