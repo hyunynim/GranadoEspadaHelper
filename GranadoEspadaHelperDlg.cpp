@@ -21,6 +21,7 @@ CGranadoEspadaHelperDlg::CGranadoEspadaHelperDlg(CWnd* pParent /*=nullptr*/)
 	hwndDesktop(::FindWindow(0, "Granado Espada"))
 	, m_imgName(_T(""))
 	, m_imgPath(_T(""))
+	, m_imgCheckDuration(1000)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -31,6 +32,7 @@ void CGranadoEspadaHelperDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_IMAGE_LIST, m_ImgList);
 	DDX_Text(pDX, IDC_IMAGE_NAME, m_imgName);
 	DDX_Text(pDX, IDC_IMAGE_PATH, m_imgPath);
+	DDX_Text(pDX, IDC_IMAGE_CHECK_DURATION, m_imgCheckDuration);
 }
 
 BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
@@ -41,6 +43,9 @@ BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_ADD_IMAGE, &CGranadoEspadaHelperDlg::OnBnClickedAddImage)
 	ON_BN_CLICKED(IDC_SAVE_IMAGE_LIST, &CGranadoEspadaHelperDlg::OnBnClickedSaveImageList)
 	ON_BN_CLICKED(IDC_DELETE_IMAGE, &CGranadoEspadaHelperDlg::OnBnClickedDeleteImage)
+	ON_BN_CLICKED(IDC_CHECK_IMAGE_START, &CGranadoEspadaHelperDlg::OnBnClickedCheckImageStart)
+	ON_BN_CLICKED(IDC_CHECK_IMAGE_STOP, &CGranadoEspadaHelperDlg::OnBnClickedCheckImageStop)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -248,4 +253,48 @@ void CGranadoEspadaHelperDlg::OnBnClickedDeleteImage()
 	m_ImgList.DeleteItem(i);
 	imgList.erase(imgList.begin() + i);
 	MessageBox("해당 이미지가 삭제되었습니다.");
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedCheckImageStart()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+	SetTimer(imageCheckTimer, m_imgCheckDuration, 0);
+}
+
+
+void CGranadoEspadaHelperDlg::OnBnClickedCheckImageStop()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	KillTimer(imageCheckTimer);
+}
+
+
+void CGranadoEspadaHelperDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	switch (nIDEvent) {
+	case imageCheckTimer:
+		
+		break;
+	}
+	CDialogEx::OnTimer(nIDEvent);
+}
+bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& result, Mat& dstImage) {
+	double minVal, maxVal;
+	Point minLoc, maxLoc;
+	matchTemplate(gameSrc, templ, result, TM_SQDIFF);
+	minMaxLoc(result, &minVal, NULL, &minLoc, NULL);
+	Mat tmp = gameSrc(Range(minLoc.y, minLoc.y + templ.rows), Range(minLoc.x, minLoc.x + templ.cols));
+	rectangle(dstImage, minLoc,
+		Point(minLoc.x + templ.cols, minLoc.y + templ.rows), Scalar(0, 255, 0), 2);
+	int cnt = 0;
+	for (int i = 0; i < tmp.rows; ++i)
+		for (int j = 0; j < tmp.cols; ++j)
+			if (tmp.at<Vec3b>(i, j) == templ.at<Vec3b>(i, j))
+				++cnt;
+	int sz = tmp.rows * tmp.cols;
+	if (sz - cnt <= sz / 1.5) return 1;
+	return 0;
 }

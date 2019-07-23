@@ -13,8 +13,8 @@
 #define IDC_FIND_IMAGE_PATH             1005
 #define IDC_ADD_IMAGE                   1006
 #define IDC_SAVE_IMAGE_LIST             1007
-#define IDC_ADD_IMAGE2                  1008
 #define IDC_DELETE_IMAGE                1008
+#define IDC_IMAGE_CHECK_DURATION        1009
 
 // Next default values for new objects
 // 

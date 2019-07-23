@@ -4,6 +4,9 @@
 
 #pragma once
 
+//ConstVar for Timer
+const int firstTimer = 1e6;
+const int imageCheckTimer = firstTimer + 1;
 
 // CGranadoEspadaHelperDlg 대화 상자
 class CGranadoEspadaHelperDlg : public CDialogEx
@@ -36,11 +39,15 @@ public:
 		CString name, path;
 		Mat img;
 	};
-	HWND hwndDesktop;		//화면 받아오기
+	HWND hwndDesktop;		//클라이언트 정보 저장
 	vector<IMAGE> imgList;	//켜진 버프를 확인할 이미지 리스트
+	Mat gameSrc;			//게임 화면
 	//Func
 	int InitImgList();		//프로그램 실행 시 저장된 이미지 리스트 불러오기
-	Mat hwnd2mat(HWND hwnd);
+	Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 Mat로 변환
+	bool FindImage(Mat& templ, Mat& result, Mat& dstImage);
+
+	//MFC
 	afx_msg void OnBnClickedOk();
 	CListCtrl m_ImgList;
 	CString m_imgName;
@@ -49,4 +56,8 @@ public:
 	afx_msg void OnBnClickedAddImage();
 	afx_msg void OnBnClickedSaveImageList();
 	afx_msg void OnBnClickedDeleteImage();
+	afx_msg void OnBnClickedCheckImageStart();
+	int m_imgCheckDuration;
+	afx_msg void OnBnClickedCheckImageStop();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
