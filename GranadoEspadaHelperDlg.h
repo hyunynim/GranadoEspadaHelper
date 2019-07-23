@@ -32,9 +32,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	//Var
+	struct IMAGE {
+		CString name, path;
+		Mat img;
+	};
 	HWND hwndDesktop;		//화면 받아오기
-	
+	vector<IMAGE> imgList;	//켜진 버프를 확인할 이미지 리스트
 	//Func
+	int InitImgList();		//프로그램 실행 시 저장된 이미지 리스트 불러오기
 	Mat hwnd2mat(HWND hwnd);
 	afx_msg void OnBnClickedOk();
+	CListCtrl m_ImgList;
 };

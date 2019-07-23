@@ -26,6 +26,7 @@ CGranadoEspadaHelperDlg::CGranadoEspadaHelperDlg(CWnd* pParent /*=nullptr*/)
 void CGranadoEspadaHelperDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_IMAGE_LIST, m_ImgList);
 }
 
 BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
@@ -47,7 +48,7 @@ BOOL CGranadoEspadaHelperDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-
+	InitImgList();
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -136,7 +137,38 @@ Mat CGranadoEspadaHelperDlg::hwnd2mat(HWND hwnd) {
 
 	return src;
 }
+/*
+InitImgList
+return 불러온 이미지 개수
+해당 image가 존재하는 경우에만 읽고 추가
+*/
+int CGranadoEspadaHelperDlg::InitImgList() {
+	/*m_ImgList init*/
+	CRect r;
+	m_ImgList.GetWindowRect(&r);
+	m_ImgList.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);	//한 행 전체 선택
+	m_ImgList.InsertColumn(0, "상태", LVCFMT_CENTER, r.Width() * 0.2);
+	m_ImgList.InsertColumn(1, "이름", LVCFMT_CENTER, r.Width() * 0.3);
+	m_ImgList.InsertColumn(2, "경로", LVCFMT_CENTER, r.Width() * 0.5);
 
+	/*File read*/
+	FILE* fp = fopen("imgList.txt", "r");
+	if (fp == NULL)
+		fp = fopen("imgList.txt", "w");
+	fclose(fp);
+	char name[1010], path[1010];
+	Mat* tmpMat;
+	while (~scanf("%s %s", name, path)) {
+		fp = fopen(path, "r");
+		if (fp == NULL)continue;
+		fclose(fp);
+		tmpMat = new Mat();
+		*tmpMat = imread(path, IMREAD_UNCHANGED);
+		imgList.push_back({ name, path, *tmpMat });
+		delete tmpMat;
+	}
+	return imgList.size();
+}
 void CGranadoEspadaHelperDlg::OnBnClickedOk()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.

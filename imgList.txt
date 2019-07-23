@@ -1,0 +1,2 @@
+프랜스펄 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\principal.png
+경험치맥스 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\expMax.png
