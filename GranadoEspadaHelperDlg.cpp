@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "GranadoEspadaHelper.h"
 #include "GranadoEspadaHelperDlg.h"
+#include"CCaputreTool.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -15,6 +16,7 @@
 // CGranadoEspadaHelperDlg 대화 상자
 
 
+Mat gameSrc;			//게임 화면
 
 CGranadoEspadaHelperDlg::CGranadoEspadaHelperDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GRANADOESPADAHELPER_DIALOG, pParent),
@@ -46,6 +48,7 @@ BEGIN_MESSAGE_MAP(CGranadoEspadaHelperDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK_IMAGE_START, &CGranadoEspadaHelperDlg::OnBnClickedCheckImageStart)
 	ON_BN_CLICKED(IDC_CHECK_IMAGE_STOP, &CGranadoEspadaHelperDlg::OnBnClickedCheckImageStop)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_CAPTURE_TOOL, &CGranadoEspadaHelperDlg::OnBnClickedCaptureTool)
 END_MESSAGE_MAP()
 
 
@@ -62,6 +65,7 @@ BOOL CGranadoEspadaHelperDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	InitImgList();
+	gameSrc = hwnd2mat(hwndDesktop);
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -101,55 +105,6 @@ HCURSOR CGranadoEspadaHelperDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-Mat CGranadoEspadaHelperDlg::hwnd2mat(HWND hwnd) {
-	HDC hwindowDC, hwindowCompatibleDC;
-
-	int height, width, srcheight, srcwidth;
-	HBITMAP hbwindow;
-	Mat src;
-	BITMAPINFOHEADER  bi;
-
-	hwindowDC = ::GetDC(hwnd);
-	hwindowCompatibleDC = CreateCompatibleDC(hwindowDC);
-	SetStretchBltMode(hwindowCompatibleDC, COLORONCOLOR);
-
-	RECT windowsize;    // get the height and width of the screen
-	::GetClientRect(hwnd, &windowsize);
-
-	srcheight = windowsize.bottom;
-	srcwidth = windowsize.right;
-	height = windowsize.bottom / 1;  //change this to whatever size you want to resize to
-	width = windowsize.right / 1;
-
-	src.create(height, width, CV_8UC4);
-
-	// create a bitmap
-	hbwindow = CreateCompatibleBitmap(hwindowDC, width, height);
-	bi.biSize = sizeof(BITMAPINFOHEADER);    //http://msdn.microsoft.com/en-us/library/windows/window/dd183402%28v=vs.85%29.aspx
-	bi.biWidth = width;
-	bi.biHeight = -height;  //this is the line that makes it draw upside down or not
-	bi.biPlanes = 1;
-	bi.biBitCount = 32;
-	bi.biCompression = BI_RGB;
-	bi.biSizeImage = 0;
-	bi.biXPelsPerMeter = 0;
-	bi.biYPelsPerMeter = 0;
-	bi.biClrUsed = 0;
-	bi.biClrImportant = 0;
-
-	// use the previously created device context with the bitmap
-	SelectObject(hwindowCompatibleDC, hbwindow);
-	// copy from the window device context to the bitmap device context
-	StretchBlt(hwindowCompatibleDC, 0, 0, width, height, hwindowDC, 0, 0, srcwidth, srcheight, SRCCOPY); //change SRCCOPY to NOTSRCCOPY for wacky colors !
-	GetDIBits(hwindowCompatibleDC, hbwindow, 0, height, src.data, (BITMAPINFO*)& bi, DIB_RGB_COLORS);  //copy from hwindowCompatibleDC to hbwindow
-
-	// avoid memory leak
-	DeleteObject(hbwindow);
-	DeleteDC(hwindowCompatibleDC);
-	::ReleaseDC(hwnd, hwindowDC);
-
-	return src;
-}
 /*
 InitImgList
 return 불러온 이미지 개수
@@ -305,4 +260,11 @@ bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& result, Mat& dstImage) 
 	int sz = tmp.rows * tmp.cols;
 	if (sz - cnt <= sz / 1.5) return 1;
 	return 0;
+}
+
+void CGranadoEspadaHelperDlg::OnBnClickedCaptureTool()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CCaputreTool dlg;
+	dlg.DoModal();
 }

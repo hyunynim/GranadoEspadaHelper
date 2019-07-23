@@ -13,6 +13,8 @@
 #include<opencv2/highgui.hpp>
 #include<opencv2/highgui/highgui_c.h>
 #include<bits/stdc++.h>
+#include <afxcontrolbars.h>
 using namespace cv;
 using namespace std;
+Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 matrix로 변환
 #endif //PCH_H

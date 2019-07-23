@@ -41,10 +41,8 @@ public:
 	};
 	HWND hwndDesktop;		//클라이언트 정보 저장
 	vector<IMAGE> imgList;	//켜진 버프를 확인할 이미지 리스트
-	Mat gameSrc;			//게임 화면
 	//Func
 	int InitImgList();		//프로그램 실행 시 저장된 이미지 리스트 불러오기
-	Mat hwnd2mat(HWND hwnd);//클라이언트 정보를 matrix로 변환
 	Mat tmp;				//계산용 임시 matrix
 	bool FindImage(Mat& templ, Mat& result, Mat& dstImage);
 
@@ -61,4 +59,5 @@ public:
 	int m_imgCheckDuration;
 	afx_msg void OnBnClickedCheckImageStop();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedCaptureTool();
 };
