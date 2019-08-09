@@ -44,7 +44,7 @@ public:
 	//Func
 	int InitImgList();		//프로그램 실행 시 저장된 이미지 리스트 불러오기
 	Mat tmp;				//계산용 임시 matrix
-	bool FindImage(Mat& templ, Mat& result, Mat& dstImage);
+	bool FindImage(Mat& templ, Mat& dstImage);
 
 	//MFC
 	afx_msg void OnBnClickedOk();

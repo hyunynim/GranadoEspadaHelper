@@ -235,10 +235,10 @@ void CGranadoEspadaHelperDlg::OnTimer(UINT_PTR nIDEvent)
 	case imageCheckTimer:
 		gameSrc = hwnd2mat(hwndDesktop);
 		for (int i = 0; i < imgList.size(); ++i) {
-			if (FindImage(imgList[i].img, tmp, gameSrc)) {
+			if (FindImage(imgList[i].img, gameSrc)) {
 				m_ImgList.SetItem(i, 0, LVIF_TEXT, "ON", 0, 0, 0, 0);
 #ifdef DBUG
-				if (i == 1)
+				if (i == 1 || i >= 3)
 					bark();
 #endif
 			}
@@ -261,13 +261,14 @@ result는 결과값 계산을 위한 temporary matrix
 dstImage는 gameSrc로부터 찾은 영역에 rect처리 된 matrix
 오차 비율(ratio)에 따라 해당 이미지가 존재하는지 여부 판단
 */
-bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& result, Mat& dstImage) {
+bool CGranadoEspadaHelperDlg::FindImage(Mat& templ, Mat& dstImage) {
 	const double ratio = 1.5;
 	double minVal, maxVal;
 	Point minLoc, maxLoc;
-	matchTemplate(gameSrc, templ, result, TM_SQDIFF);
-	minMaxLoc(result, &minVal, NULL, &minLoc, NULL);
+	matchTemplate(gameSrc, templ, tmp, TM_SQDIFF);
+	minMaxLoc(tmp, &minVal, NULL, &minLoc, NULL);
 	Mat tmp = gameSrc(Range(minLoc.y, minLoc.y + templ.rows), Range(minLoc.x, minLoc.x + templ.cols));
+
 	rectangle(dstImage, minLoc,
 		Point(minLoc.x + templ.cols, minLoc.y + templ.rows), Scalar(0, 255, 0), 2);
 	int cnt = 0;

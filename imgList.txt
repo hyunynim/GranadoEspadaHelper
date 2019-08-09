@@ -1,3 +1,5 @@
 프랜스펄 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\principal.png
 경험치맥스 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\expMax.png
 슈팅프로모토 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\shooting.png
+경험치맥스2 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\expMax1.png
+경험치맥스2 D:\Develop\Granado_Espada\GranadoEspadaHelper\img\expMax2.png
